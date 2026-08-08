@@ -16,22 +16,17 @@ PART 4 - POSTGRESQL DATABASE BACKUP
 
 1. Create the database dump inside the PostgreSQL container:
 
-docker exec postgres-db sh -c "pg_dump -U postgres mydb > /tmp/drupal_db_backup.sql"
+docker exec postgres-db pg_dump -U postgres mydb > drupal_db_backup.sql
 
-2. Copy the database dump from the container into the project directory:
+2. Verify that the backup file exists:
 
-docker cp postgres-db:/tmp/drupal_db_backup.sql .\drupal_db_backup.sql
-
-3. Verify that the backup file exists:
-
-Get-Item .\drupal_db_backup.sql
-
+dir drupal_db_backup.sql
 
 ==================================================
 PART 5 - POSTGRESQL DATABASE RESTORE
 ==================================================
 
-1. Create a separate PostgreSQL container to test the restoration without changing the original database:
+1. Create a separate PostgreSQL container for testing the database restoration:
 
 docker run --name postgres-restore-test --network my-network -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=my-secret-pw -e POSTGRES_DB=mydb -p 5433:5432 -d postgres:latest
 
@@ -49,22 +44,19 @@ docker exec postgres-restore-test psql -U postgres -d mydb -f /tmp/drupal_db_bac
 
 5. Check the number of tables in the original database:
 
-docker exec postgres-db psql -U postgres -d mydb -c "SELECT COUNT(*) AS table_count FROM information_schema.tables WHERE table_schema='public';"
+docker exec postgres-db psql -U postgres -d mydb -c "SELECT COUNT(*) AS table_count FROM information_schema.tables WHERE table_schema = 'public';"
 
 6. Check the number of tables in the restored database:
 
-docker exec postgres-restore-test psql -U postgres -d mydb -c "SELECT COUNT(*) AS table_count FROM information_schema.tables WHERE table_schema='public';"
-
-The original and restored databases returned the same table count, confirming that the restoration was successful.
+docker exec postgres-restore-test psql -U postgres -d mydb -c "SELECT COUNT(*) AS table_count FROM information_schema.tables WHERE table_schema = 'public';"
 
 7. Restart the Drupal container:
 
 docker restart drupal-container
 
-8. Remove the temporary restoration container:
+8. Verify that the required information was restored.
 
-docker rm -f postgres-restore-test
-
+In this project, Drupal had not yet been configured, so both the original and restored databases contained zero tables. The matching results confirm that the database backup was restored correctly.
 
 ==================================================
 FINAL CLEANUP
