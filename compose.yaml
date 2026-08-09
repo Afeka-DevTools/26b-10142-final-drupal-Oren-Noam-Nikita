@@ -1,6 +1,3 @@
-# devtools-course-assignment
-Final assignment in Dev Tools course
-
 services:
   mysql:
     image: mysql:latest
@@ -35,3 +32,4 @@ networks:
 volumes:
   mysql_data:
   drupal_data:
+
