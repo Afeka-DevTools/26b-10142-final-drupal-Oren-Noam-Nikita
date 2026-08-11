@@ -1,16 +1,15 @@
 services:
-  mysql:
-    image: mysql:latest
-    container_name: drupal-mysql
+  postgres:
+    image: postgres:latest
+    container_name: drupal-postgres
     environment:
-      MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_DATABASE: drupal_db
-      MYSQL_USER: drupal_user
-      MYSQL_PASSWORD: drupal_pass
+      POSTGRES_DB: drupal_db
+      POSTGRES_USER: drupal_user
+      POSTGRES_PASSWORD: my-secret-pw
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql
     networks:
       - drupal_network
 
@@ -18,7 +17,7 @@ services:
     image: drupal:latest
     container_name: drupal-app
     depends_on:
-      - mysql
+      - postgres
     ports:
       - "8080:80"
     volumes:
@@ -30,6 +29,5 @@ networks:
   drupal_network:
 
 volumes:
-  mysql_data:
+  postgres_data:
   drupal_data:
-
