@@ -2,7 +2,7 @@
 
 ## a. Who I Am
 
-My name is Nikita Koyfman, and I am a student in the Development Tools course at Afeka College.
+My name is Nikita Koyfman and I am a student in the Development Tools course at Afeka College.
 
 ## b. What I Was Required to Do
 
