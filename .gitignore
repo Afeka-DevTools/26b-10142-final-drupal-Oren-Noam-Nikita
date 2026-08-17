@@ -1,3 +1,6 @@
 # IDE & Code Editors Environment Files
 .idea/
 .vscode/
+
+# Drupal project data - Bloatware, should be backed up
+data/
