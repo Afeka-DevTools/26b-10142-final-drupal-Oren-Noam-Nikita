@@ -1,33 +1,43 @@
+name: dev-tools-drupal-project
+
 services:
   postgres:
     image: postgres:latest
-    container_name: drupal-postgres
+    pull_policy: always
+    container_name: drupal-db
     environment:
-      POSTGRES_DB: drupal_db
-      POSTGRES_USER: drupal_user
-      POSTGRES_PASSWORD: my-secret-pw
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - ./${DB_DATA_DIR}:/var/lib/postgresql/data
     networks:
       - drupal_network
 
   drupal:
     image: drupal:latest
-    container_name: drupal-app
+    pull_policy: always
+    container_name: drupal-data
     depends_on:
       - postgres
     ports:
       - "8080:80"
+    environment:
+      DRUPAL_DB_HOST: postgres
+      DRUPAL_DB_NAME: ${DATABASE_NAME}
+      DRUPAL_DB_USER: ${DATABASE_USER}
+      DRUPAL_DB_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - drupal_data:/var/www/html
+      - ./${DRUPAL_DATA_DIR}/sites:/opt/drupal/web/sites
+      - ./${DRUPAL_DATA_DIR}/modules:/opt/drupal/web/modules
+      - ./${DRUPAL_DATA_DIR}/profiles:/opt/drupal/web/profiles
+      - ./${DRUPAL_DATA_DIR}/themes:/opt/drupal/web/themes
     networks:
       - drupal_network
 
 networks:
   drupal_network:
-
-volumes:
-  postgres_data:
-  drupal_data:
+    name: drupal-project-network
